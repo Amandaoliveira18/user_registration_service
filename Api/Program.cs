@@ -11,7 +11,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<ProblemDetailsFactory, CustomProblemDetailsFactory>();
 // Configurações de validação
 
 var app = builder.Build();

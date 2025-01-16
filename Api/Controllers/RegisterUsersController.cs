@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Api.Controllers
 {
@@ -11,9 +12,32 @@ namespace Api.Controllers
         [Route("nutritionists")]
         public IActionResult PostNutritionist(NutritionistUser nutritionistUser)
         {
-            //nutritionistUser.Validate();
-
-            return Ok("Nutricionista cadastrado com sucesso!");
+            try
+            {
+                nutritionistUser.Validate();
+                //service
+                return Ok(new { id = "teste", message = "Nutricionista cadastrado com sucesso!" });
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new {code = 400, message = ex.Message });
+            }
         }
+        [HttpPost]
+        [Route("patients")]
+        public IActionResult PostPatients(PatientUser nutritionistUser)
+        {
+            try
+            {
+                nutritionistUser.Validate();
+                //service
+                return Ok(new { id = "teste", message = "Paciente cadastrado com sucesso!" });
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { code = 400, message = ex.Message });
+            }
+        }
+
     }
 }
