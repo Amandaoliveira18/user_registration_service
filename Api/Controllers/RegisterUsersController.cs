@@ -22,7 +22,7 @@ namespace Api.Controllers
             {
                 //nutritionistUser.Validate();
 
-                _userControlService.GetUser();
+                
                 return Ok(new { id = "teste", message = "Nutricionista cadastrado com sucesso!" });
             }
             catch (ValidationException ex)
@@ -37,7 +37,7 @@ namespace Api.Controllers
             try
             {
                 
-                nutritionistUser.Validate();
+                
                 //service
                 return Ok(new { id = "teste", message = "Paciente cadastrado com sucesso!" });
             }

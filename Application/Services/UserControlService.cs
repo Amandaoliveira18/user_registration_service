@@ -24,7 +24,6 @@ namespace Application.Services
 
         public async Task<ResultService> CreateNutritionistUserAsync(NutritionistUser user)
         {
-
             ValidateLicenseNumber(user.License_Number);
             ValidateEmail(user.Email);
             ValidadePassword(user.Password);

@@ -14,7 +14,6 @@ namespace Domain.Adapters
         Task<string> Delete(string id);
         Task<PatientUser> GetPatient(string id);
         Task<NutritionistUser> GetNutritionist(string id);
-        Task<List<string>> GetPatients();
         Task<List<string>> GetNutritionists();
 
     }

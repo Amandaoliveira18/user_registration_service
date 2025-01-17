@@ -15,45 +15,33 @@ namespace Infra.DataBase.Repositories
         {
             _mySqlConnectionHelper = mySqlConnectionHelper;
         }
-        public async Task<string> Delete(User user)
+
+        public Task<string> Delete(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<string> Delete(string user)
+        public Task<NutritionistUser> GetNutritionist(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<NutritionistUser> GetNutritionist(NutritionistUser nutritionistUser)
+        public Task<List<string>> GetNutritionists()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<string>> GetNutritionists(NutritionistUser nutritionistUser)
+        public Task<PatientUser> GetPatient(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PatientUser> GetPatient(PatientUser patientUser)
+        public Task<string> Insert(User user)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<string>> GetPatients(PatientUser patientUser)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<string> Insert(User user)
-        {
-            _mySqlConnectionHelper.OpenConnection();
-
-            var teste = "ola";
-            return teste;
-        }
-
-        public async Task<string> Update(User user)
+        public Task<string> Update(User user)
         {
             throw new NotImplementedException();
         }
