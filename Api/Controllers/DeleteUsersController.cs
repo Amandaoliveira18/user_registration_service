@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,33 +9,56 @@ namespace Api.Controllers
     [Route("user-registration-service")]
     public class DeleteUsersController : ControllerBase
     {
+        private readonly IUserControlService _userControlService;
+        public DeleteUsersController(IUserControlService userControlService) 
+        {
+           _userControlService = userControlService;
+        }
 
         [HttpDelete]
         [Route("nutritionists/{id}")]
-        public IActionResult DeleteNutritionist()
+        public async Task<IActionResult> DeleteNutritionistAsync(string id)
         {
             try
             {
-                //service
-                return Ok(new { id = "teste", message = "Nutricionista cadastrado com sucesso!" });
+                var response = await _userControlService.DeleteUserAsync(id);
+
+                if (response.Success)
+                    return Ok(new { id = response.Message, message = "Nutricionista excluido com sucesso!" });
+
+                return BadRequest(response.Data);
+
             }
             catch (ValidationException ex)
             {
                 return BadRequest(new { code = 400, message = ex.Message });
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { code = 500, message = ex.Message });
             }
         }
         [HttpDelete]
         [Route("patients/{id}")]
-        public IActionResult DeletePatient()
+        public async Task<IActionResult> DeletePatientAsync(string id)
         {
             try
             {
-                //service
-                return Ok(new { id = "teste", message = "O Paciente foi excluído com sucesso!" });
+                var response = await _userControlService.DeleteUserAsync(id);
+
+                if (response.Success)
+                    return Ok(new { id = response.Message, message = "Paciente excluido com sucesso!" });
+
+                return BadRequest(response.Data);
+
             }
             catch (ValidationException ex)
             {
                 return BadRequest(new { code = 400, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { code = 500, message = ex.Message });
             }
         }
     }

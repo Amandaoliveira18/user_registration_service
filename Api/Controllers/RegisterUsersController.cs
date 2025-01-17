@@ -16,34 +16,48 @@ namespace Api.Controllers
         }
         [HttpPost]
         [Route("nutritionists")]
-        public IActionResult PostNutritionist(NutritionistUser nutritionistUser)
+        public async Task<IActionResult> PostNutritionistAsync(NutritionistUser nutritionistUser)
         {
             try
             {
-                //nutritionistUser.Validate();
+                var response = await _userControlService.CreateUserAsync(nutritionistUser);
 
-                
-                return Ok(new { id = "teste", message = "Nutricionista cadastrado com sucesso!" });
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new {code = 400, message = ex.Message });
-            }
-        }
-        [HttpPost]
-        [Route("patients")]
-        public IActionResult PostPatients(PatientUser nutritionistUser)
-        {
-            try
-            {
-                
-                
-                //service
-                return Ok(new { id = "teste", message = "Paciente cadastrado com sucesso!" });
+                if (response.Success)
+                    return Ok(new { id = response.Message, message = "Nutricionista cadastrado com sucesso!" });
+
+                return NotFound(new { code = 400, message = response.Message });
+
             }
             catch (ValidationException ex)
             {
                 return BadRequest(new { code = 400, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { code = 500, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("patients")]
+        public async Task<IActionResult> PostPatientsAsync(PatientUser patientUser)
+        {
+            try
+            {
+                var response = await _userControlService.CreateUserAsync(patientUser);
+
+                if (response.Success)
+                    return Ok(new { id = response.Message, message = "Paciente cadastrado com sucesso!" });
+
+                return NotFound(new { code = 400, message = response.Message });
+
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { code = 400, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { code = 500, message = ex.Message });
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.Services;
+using Mysqlx.Crud;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,12 @@ namespace Domain.Services
 {
     public interface IUserControlService
     {
-        Task<ResultService> CreateNutritionistUserAsync(NutritionistUser nutritionistUser);
-        Task<ResultService> CreatePatientUserAsync(PatientUser nutritionistUser);
-        Task<ResultService> UpdateNutritionistUserAsync(NutritionistUser nutritionistUser);
-        Task<ResultService> UpdatePatientUserAsync(PatientUser nutritionistUser);
 
+        Task<ResultService> CreateUserAsync<TUser>(TUser user) where TUser : User;
+        Task<ResultService> UpdateUserAsync<TUser>(TUser user, string updateId) where TUser : User;
         Task<ResultService> DeleteUserAsync(string id);
-        Task<ResultService> GetPatientAsync(string id);
-        Task<ResultService> GetNutritionistAsync(string id);
-        Task<ResultService> GetNutritionistsAsync();
+        Task<ResultService> GetUserAsync<TUser>(string id) where TUser : User;
+        Task<ResultService> GetUsersAsync();
+
     }
 }

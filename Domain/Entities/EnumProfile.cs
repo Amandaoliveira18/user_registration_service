@@ -8,7 +8,7 @@ namespace Domain.Entities
 {
     public enum EnumProfile
     {
-        Nutricionist = 0,
+        Nutritionist = 0,
         Patient = 1,
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.Adapters;
+using Domain.Entities;
 using Domain.Entities.Repository;
 using Domain.Entities.Services;
 using Domain.Services;
@@ -21,57 +22,57 @@ namespace Application.Services
         {
             _repository = repository;
         }
-
-        public async Task<ResultService> CreateNutritionistUserAsync(NutritionistUser user)
+        public async Task<ResultService> CreateUserAsync<TUser>(TUser user) where TUser : User
         {
-            ValidateLicenseNumber(user.License_Number);
+            if (user is NutritionistUser nutritionist)
+                ValidateLicenseNumber(nutritionist.License_Number);
+
             ValidateEmail(user.Email);
             ValidadePassword(user.Password);
 
-            var id = await _repository.Insert(user);
+            var id = await _repository.Insert(user, EnumProfile.Nutritionist);
 
             if (id == null)
                 return Result(false, id);
 
             return Result(true, id);
         }
-        public async Task<ResultService> CreatePatientUserAsync(PatientUser user)
+
+        public async Task<ResultService> UpdateUserAsync<TUser>(TUser user, string updateId) where TUser : User
         {
-            ValidateEmail(user.Email);
-            ValidadePassword(user.Password);
-            var id = await _repository.Insert(user);
+            if (user is NutritionistUser nutritionist)
+                ValidateField(nutritionist.License_Number, ValidateLicenseNumber);
+
+            ValidateField(user.Email, ValidateEmail);
+            ValidateField(user.Password, ValidadePassword);
+
+            var id = await _repository.Update(user, updateId);
 
             if (id == null)
+                return Result(false, id);
+
+            return Result(true, id);
+        }
+
+        public async Task<ResultService> GetUserAsync<TUser>(string id) where TUser : User
+        {
+            object? user = typeof(TUser) == typeof(NutritionistUser) ? await _repository.GetNutritionist(id) : await _repository.GetPatient(id);
+
+            if (user == null)
                 return Result(false);
 
-            return Result(true, id);
+            return Result(true, userObject: user);
         }
-        public async Task<ResultService> UpdateNutritionistUserAsync(NutritionistUser user)
+
+        public async Task<ResultService> GetUsersAsync() 
         {
+            var users = await _repository.GetNutritionists();
 
-            ValidateField(user.License_Number, ValidateLicenseNumber);
-            ValidateField(user.Email, ValidateEmail);
-            ValidateField(user.Password, ValidadePassword);
+            if (users == null)
+                return Result(false);
 
-            var id = await _repository.Update(user);
+            return Result(true, userObject: users);
 
-            if (id == null)
-                return Result(false, id);
-
-            return Result(true, id);
-        }
-        public async Task<ResultService> UpdatePatientUserAsync(PatientUser user)
-        {
-
-            ValidateField(user.Email, ValidateEmail);
-            ValidateField(user.Password, ValidadePassword);
-
-            var id = await _repository.Update(user);
-
-            if (id == null)
-                return Result(false, id);
-
-            return Result(true, id);
         }
         public async Task<ResultService> DeleteUserAsync(string id)
         {
@@ -83,36 +84,6 @@ namespace Application.Services
 
             return Result(true, retorno);
         }
-
-        public async Task<ResultService> GetPatientAsync(string id)
-        {
-
-            var retorno = await _repository.GetPatient(id);
-
-            if (retorno == null)
-                return Result(false);
-
-            return Result(true, userObject: retorno);
-        }
-        public async Task<ResultService> GetNutritionistAsync(string id)
-        {
-            var retorno = await _repository.GetNutritionist(id);
-
-            if (retorno == null)
-                return Result(false);
-
-            return Result(true, userObject: retorno);
-        }
-        public async Task<ResultService> GetNutritionistsAsync()
-        {
-            var retorno = await _repository.GetNutritionists();
-
-            if (retorno == null)
-                return Result(false);
-
-            return Result(true, userObject: retorno);
-        }
-     
         private static void ValidateField(string field, Action<string> validation)
         {
             if (!string.IsNullOrEmpty(field))  
@@ -151,6 +122,6 @@ namespace Application.Services
             return result;
         }
 
-      
+ 
     }
 }

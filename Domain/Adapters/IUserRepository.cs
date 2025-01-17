@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Services;
+﻿using Domain.Entities;
+using Domain.Entities.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ namespace Domain.Adapters
 {
     public interface IUserRepository
     {
-        Task<string> Insert(User user);
-        Task<string> Update(User user);
-        Task<string> Delete(string id);
-        Task<PatientUser> GetPatient(string id);
-        Task<NutritionistUser> GetNutritionist(string id);
-        Task<List<string>> GetNutritionists();
+        Task<string?> Insert(User user, EnumProfile enumProfile);
+        Task<string?> Update(User user, string id);
+        Task<string?> Delete(string id);
+        Task<PatientUser?> GetPatient(string id);
+        Task<NutritionistUser?> GetNutritionist(string id);
+        Task<List<string?>> GetNutritionists();
 
     }
 }
