@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Entities.Services;
+using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,14 +9,20 @@ namespace Api.Controllers
     [Route("user-registration-service/users")]
     public class RegisterUsersController : ControllerBase
     {
+        private readonly IUserControlService _userControlService;
+        public RegisterUsersController(IUserControlService userControlService)
+        {
+           _userControlService = userControlService;
+        }
         [HttpPost]
         [Route("nutritionists")]
         public IActionResult PostNutritionist(NutritionistUser nutritionistUser)
         {
             try
             {
-                nutritionistUser.Validate();
-                //service
+                //nutritionistUser.Validate();
+
+                _userControlService.GetUser();
                 return Ok(new { id = "teste", message = "Nutricionista cadastrado com sucesso!" });
             }
             catch (ValidationException ex)
@@ -29,6 +36,7 @@ namespace Api.Controllers
         {
             try
             {
+                
                 nutritionistUser.Validate();
                 //service
                 return Ok(new { id = "teste", message = "Paciente cadastrado com sucesso!" });
