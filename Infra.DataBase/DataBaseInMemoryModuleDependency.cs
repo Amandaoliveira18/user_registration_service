@@ -1,4 +1,5 @@
 ﻿using Domain.Adapters;
+using Infra.DataBase.Broker;
 using Infra.DataBase.ConnectionHelper;
 using Infra.DataBase.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ namespace Infra.DataBase
         {
             services.AddTransient<IMySqlConnectionHelper, MySqlConnectionHelper>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddSingleton(typeof(IKafkaProducer<,>), typeof(KafkaProducer<,>));
         }
     }
 }

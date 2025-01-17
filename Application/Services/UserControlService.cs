@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Confluent.Kafka;
+using Domain;
 using Domain.Adapters;
 using Domain.Entities;
 using Domain.Entities.Repository;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -19,9 +21,11 @@ namespace Application.Services
     public class UserControlService : IUserControlService
     {
         private readonly IUserRepository _repository;
-        public UserControlService(IUserRepository repository)
+        private readonly IKafkaProducer<Null, string> _producer;
+        public UserControlService(IUserRepository repository, IKafkaProducer<Null, string> producer)
         {
             _repository = repository;
+            _producer = producer;
         }
         public async Task<ResultService> CreateUserAsync<TUser>(TUser user) where TUser : User
         {
@@ -36,7 +40,14 @@ namespace Application.Services
             if (id == null)
                 return Result(false, id);
 
-            return Result(true, id);
+            var messageProducer = new Message<Null, string>()
+            {
+                Value = JsonSerializer.Serialize(user),
+            };
+
+            var producer = await _producer.TopicSubmission("UserCreated", messageProducer);
+             
+            return Result(producer, id);
         }
 
         public async Task<ResultService> UpdateUserAsync<TUser>(TUser user, string updateId) where TUser : User
