@@ -23,7 +23,7 @@ namespace Api.Controllers
                 var response = await _userControlService.UpdateUserAsync(patientUser, id);
 
                 if (response.Success)
-                    return Ok(new { id = response.Message, message = "Registro atualizado com sucesso!" });
+                    return Ok(new { id, message = "Registro atualizado com sucesso!" });
 
                 return NotFound(new { code = 400, message = response.Message });
 
@@ -47,7 +47,7 @@ namespace Api.Controllers
                 var response = await _userControlService.UpdateUserAsync(nutritionistUser, id);
 
                 if (response.Success)
-                    return Ok(new { id = response.Message, message = "Registro atualizado com sucesso!" });
+                    return Ok(new { id, message = "Registro atualizado com sucesso!" });
 
                 return NotFound(new { code = 400, message = response.Message });
 

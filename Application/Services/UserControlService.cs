@@ -3,6 +3,7 @@ using Domain.Adapters;
 using Domain.Entities;
 using Domain.Entities.Repository;
 using Domain.Entities.Services;
+using Domain.Entities.Services.Response;
 using Domain.Services;
 using Mysqlx;
 using System;
@@ -64,14 +65,33 @@ namespace Application.Services
             return Result(true, userObject: user);
         }
 
-        public async Task<ResultService> GetUsersAsync() 
+        public async Task<IEnumerable<NutritionistUserResponse?>?> GetUsersAsync() 
         {
             var users = await _repository.GetNutritionists();
 
             if (users == null)
-                return Result(false);
+                return null;
 
-            return Result(true, userObject: users);
+            
+            List<NutritionistUserResponse> listNutritionist = [];
+
+            foreach (var user in users)
+            {
+                NutritionistUserResponse mapper = new()
+                {
+                    Cpf = user.Cpf_User,
+                    License_Number = user.Lincese_Number,
+                    Name = user.Name_User,
+                    Password = user.Password_User,
+                    Email = user.Email,
+                    id = user.Id
+                };
+
+                listNutritionist.Add(mapper);
+            }
+
+           
+            return listNutritionist;
 
         }
         public async Task<ResultService> DeleteUserAsync(string id)

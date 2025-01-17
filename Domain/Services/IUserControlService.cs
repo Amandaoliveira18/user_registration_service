@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.Services;
+using Domain.Entities.Services.Response;
 using Mysqlx.Crud;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Domain.Services
         Task<ResultService> UpdateUserAsync<TUser>(TUser user, string updateId) where TUser : User;
         Task<ResultService> DeleteUserAsync(string id);
         Task<ResultService> GetUserAsync<TUser>(string id) where TUser : User;
-        Task<ResultService> GetUsersAsync();
+        Task<IEnumerable<NutritionistUserResponse?>?> GetUsersAsync();
 
     }
 }

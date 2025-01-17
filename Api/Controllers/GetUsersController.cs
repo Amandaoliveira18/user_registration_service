@@ -22,8 +22,8 @@ namespace Api.Controllers
             {
                 var response = await _userControlService.GetUsersAsync();
 
-                if (response.Success)
-                    return Ok(new { response.Data });
+                if (response.Any())
+                    return Ok(response);
 
                 return NotFound(new {code= 404, message = "Lista não localizada"});
 
@@ -46,7 +46,7 @@ namespace Api.Controllers
                 var response = await _userControlService.GetUserAsync<NutritionistUser>(id);
 
                 if (response.Success)
-                    return Ok(new { response.Data });
+                    return Ok(response.Data);
 
                 return NotFound(new { code = 404, message = "Id Não encontrado" });
 
@@ -69,7 +69,7 @@ namespace Api.Controllers
                 var response = await _userControlService.GetUserAsync<PatientUser>(id);
 
                 if (response.Success)
-                    return Ok(new { response.Data });
+                    return Ok(response.Data);
 
                 return NotFound(new { code = 404, message = "Id Não encontrado" });
 

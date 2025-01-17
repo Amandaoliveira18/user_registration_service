@@ -2,7 +2,9 @@
 using Dapper;
 using Domain.Adapters;
 using Domain.Entities;
+using Domain.Entities.Repository;
 using Domain.Entities.Services;
+using Domain.Entities.Services.Response;
 
 namespace Infra.DataBase.Repositories
 {
@@ -53,22 +55,50 @@ namespace Infra.DataBase.Repositories
 
         public async Task<string?> Update(User user, string id)
         {
-            const string query = @"
+            // Lista para construir os campos a serem atualizados dinamicamente
+            var updates = new List<string>();
+            var parameters = new Dictionary<string, object> { { "Id", id } };
+
+            if (!string.IsNullOrEmpty(user.Name))
+            {
+                updates.Add("Name_User = @Name");
+                parameters.Add("Name", user.Name);
+            }
+            if (!string.IsNullOrEmpty(user.Email))
+            {
+                updates.Add("Email = @Email");
+                parameters.Add("Email", user.Email);
+            }
+            if (!string.IsNullOrEmpty(user.Password))
+            {
+                updates.Add("Password_User = @Password");
+                parameters.Add("Password", user.Password);
+            }
+            if (user is NutritionistUser nutritionist)
+            {
+                if (!string.IsNullOrEmpty(nutritionist.License_Number))
+                {
+                    updates.Add("Lincese_Number = @LicenseNumber");
+                    parameters.Add("LicenseNumber", nutritionist.License_Number);
+                }
+                if (!string.IsNullOrEmpty(nutritionist.Cpf))
+                {
+                    updates.Add("Cpf_User = @Cpf");
+                    parameters.Add("Cpf", nutritionist.Cpf);
+                }
+            }
+
+            // Verifica se há algo para atualizar
+            if (updates.Count == 0)
+            {
+                return "No fields to update.";
+            }
+
+                    var query = $@"
                 UPDATE mysqlDB.USERS
-                SET Name_User = @Name, Email = @Email, Password_User = @Password,
-                    Lincese_Number = @LicenseNumber, Cpf_User = @Cpf
+                SET {string.Join(", ", updates)}
                 WHERE Id = @Id
             ";
-
-            var parameters = new
-            {
-                Id = id,
-                Name = user.Name,
-                Email = user.Email,
-                Password = user.Password,
-                LicenseNumber = user is NutritionistUser nutritionist ? nutritionist.License_Number : null,
-                Cpf = user is NutritionistUser nutritionistUser ? nutritionistUser.Cpf : null
-            };
 
             try
             {
@@ -82,6 +112,7 @@ namespace Infra.DataBase.Repositories
                 throw;
             }
         }
+
 
         public async Task<string?> Delete(string id)
         {
@@ -100,7 +131,7 @@ namespace Infra.DataBase.Repositories
             }
         }
 
-        public async Task<NutritionistUser?> GetNutritionist(string id)
+        public async Task<NutritionistUserResponse?> GetNutritionist(string id)
         {
             const string query = @"
                 SELECT Id, Name_User AS Name, Email, Password_User AS Password,
@@ -112,7 +143,7 @@ namespace Infra.DataBase.Repositories
             try
             {
                 using var connection = _mySqlConnectionHelper.OpenConnection();
-                return await connection.QuerySingleOrDefaultAsync<NutritionistUser>(query, new { Id = id });
+                return await connection.QuerySingleOrDefaultAsync<NutritionistUserResponse?>(query, new { Id = id });
             }
             catch (Exception ex)
             {
@@ -141,10 +172,10 @@ namespace Infra.DataBase.Repositories
             }
         }
 
-        public async Task<List<string?>> GetNutritionists()
+        public async Task<List<UserDTO?>> GetNutritionists()
         {
             const string query = @"
-                SELECT Id
+                SELECT *
                 FROM mysqlDB.USERS
                 WHERE Profile_User = 'Nutritionist'
             ";
@@ -152,8 +183,8 @@ namespace Infra.DataBase.Repositories
             try
             {
                 using var connection = _mySqlConnectionHelper.OpenConnection();
-                var ids = await connection.QueryAsync<string?>(query);
-                return ids.ToList();
+                var users = await connection.QueryAsync<UserDTO?>(query);
+                return users.ToList();
             }
             catch (Exception ex)
             {

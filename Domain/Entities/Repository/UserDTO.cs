@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace Domain.Entities.Repository
 {
     [Table("USERS")]
-    public class Users
+    public class UserDTO
     {
         public string Id { get; set; }
         public string Name_User { get; set; }
         public string Email { get; set; }
         public string Password_User { get; set; }
-        public string Lincense_Number { get; set; }
+        public string Lincese_Number { get; set; }
         public string Cpf_User { get; set; }
         public string Profile_User { get; set;}
     }
