@@ -21,7 +21,7 @@ namespace Infra.DataBase.ConnectionHelper
         {
             try
             {
-                var stringConnection = "Server=localhost;Port=3306;Uid=root;Pwd=mysqlPW;Database=mysqlDB;";
+                var stringConnection = "Server=db;Port=3306;Uid=root;Pwd=mysqlPW;Database=mysqlDB;";
                 var connection = new MySqlConnection(stringConnection);
                 connection.Open();
                 return connection;

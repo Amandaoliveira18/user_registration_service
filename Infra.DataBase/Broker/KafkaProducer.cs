@@ -15,16 +15,23 @@ namespace Infra.DataBase.Broker
         {
             try
             {
-                var config = new ProducerConfig { BootstrapServers = "localhost:29092" };
+               
+                var config = new ProducerConfig { BootstrapServers = "broker:29092" };
                 var producer = new ProducerBuilder<TKey, Tvalue>(config).Build();
 
                 var result = await producer.ProduceAsync(topico, message);
 
                 return result.Status == PersistenceStatus.Persisted;
             }
+            catch (ProduceException<TKey, Tvalue> ex)
+            {
+                // Log de erro mais detalhado
+                Console.WriteLine($"Falha ao produzir mensagem para o tópico {topico}: {ex.Error.Reason}");
+                return false;
+            }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine($"Erro inesperado: {ex.Message}");
                 return false;
             }
 
